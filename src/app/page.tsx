@@ -1,66 +1,19 @@
 "use client";
-import axios from "axios";
-import { ChevronDown, ChevronUp, Power, Volume2, VolumeX } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-
-type Channel = string;
-
-// Custom hook for fetching channels
-const useChannels = () => {
-  const [channels, setChannels] = useState<Channel[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchChannels = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get("/api/getTwitchChannels");
-        setChannels(response.data);
-        setError(null);
-      } catch (error) {
-        console.error("Error fetching channels:", error);
-        setError("Failed to fetch channels. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchChannels();
-  }, []);
-
-  return { channels, isLoading, error };
-};
-
-interface ChannelDisplayProps {
-  channelNumber: number;
-}
-
-const ChannelDisplay: React.FC<ChannelDisplayProps> = ({ channelNumber }) => (
-  <div className="absolute top-4 left-4 z-20 font-mono text-2xl text-green-500 font-bold">
-    <span>CH {channelNumber.toString().padStart(2, "0")}</span>
-  </div>
-);
-
-interface RemoteButtonProps {
-  onClick: () => void;
-  icon: React.ReactNode;
-  label: string;
-}
-
-const RemoteButton: React.FC<RemoteButtonProps> = ({
-  onClick,
-  icon,
-  label,
-}) => (
-  <button
-    onClick={onClick}
-    className="bg-gray-700 text-white p-3 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500"
-    aria-label={label}
-  >
-    {icon}
-  </button>
-);
+import ChannelDisplay from "@/components/ChannelDisplay";
+import Modal from "@/components/Modal";
+import RemoteButton from "@/components/RemoteButton";
+import useChannels from "@/hooks/useChannels";
+import {
+  ChevronDown,
+  ChevronUp,
+  Expand,
+  Info,
+  Minimize,
+  Power,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
+import React, { useCallback, useRef, useState } from "react";
 
 const Home: React.FC = () => {
   const staticRef = useRef<HTMLDivElement>(null);
@@ -69,6 +22,8 @@ const Home: React.FC = () => {
   const [currentChannelIndex, setCurrentChannelIndex] = useState(0);
   const [isMuted, setIsMuted] = useState(true);
   const [isPoweredOn, setIsPoweredOn] = useState(true);
+  const [isRemoteExpanded, setIsRemoteExpanded] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleChannelChange = useCallback(
     (direction: "up" | "down") => {
@@ -89,6 +44,8 @@ const Home: React.FC = () => {
 
   const toggleMute = () => setIsMuted(!isMuted);
   const togglePower = () => setIsPoweredOn(!isPoweredOn);
+  const toggleRemoteExpansion = () => setIsRemoteExpanded(!isRemoteExpanded);
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
@@ -116,24 +73,67 @@ const Home: React.FC = () => {
         }`}
       />
 
-      <div className="absolute bottom-8 right-8 flex flex-col space-y-4 z-20">
-        <RemoteButton
-          onClick={() => handleChannelChange("up")}
-          icon={<ChevronUp />}
-          label="Channel Up"
-        />
-        <RemoteButton
-          onClick={() => handleChannelChange("down")}
-          icon={<ChevronDown />}
-          label="Channel Down"
-        />
-        <RemoteButton
-          onClick={toggleMute}
-          icon={isMuted ? <VolumeX /> : <Volume2 />}
-          label="Toggle Mute"
-        />
-        <RemoteButton onClick={togglePower} icon={<Power />} label="Power" />
+      <div
+        className={`absolute bottom-8 right-8 z-20 transition-all duration-300 ${
+          isRemoteExpanded ? "scale-100 opacity-100" : "scale-75 opacity-75"
+        }`}
+      >
+        <div className="grid grid-cols-2 gap-4">
+          {isRemoteExpanded && (
+            <>
+              <RemoteButton
+                onClick={togglePower}
+                icon={<Power />}
+                label="Power"
+              />
+
+              <RemoteButton
+                onClick={() => handleChannelChange("up")}
+                icon={<ChevronUp />}
+                label="Channel Up"
+              />
+
+              <RemoteButton
+                onClick={toggleMute}
+                icon={isMuted ? <VolumeX /> : <Volume2 />}
+                label="Toggle Mute"
+              />
+              <RemoteButton
+                onClick={() => handleChannelChange("down")}
+                icon={<ChevronDown />}
+                label="Channel Down"
+              />
+            </>
+          )}
+          <RemoteButton
+            onClick={toggleRemoteExpansion}
+            icon={isRemoteExpanded ? <Minimize /> : <Expand />}
+            label={isRemoteExpanded ? "Collapse Remote" : "Expand Remote"}
+          />
+          <RemoteButton
+            onClick={toggleModal}
+            icon={<Info />}
+            label="Information"
+          />
+        </div>
       </div>
+
+      <Modal isOpen={isModalOpen} onClose={toggleModal}>
+        <div className="mb-4">
+          <h2 className="text-xl">Email</h2>
+          <p>phragg@example.com</p>
+        </div>
+
+        <div className="mb-4">
+          <h2 className="text-xl">Support</h2>
+          <p>0x862bF52be02a2AbF96FdAeB22EA9089E821b0591</p>
+        </div>
+
+        <div>
+          <h2 className="text-xl">Inspiration</h2>
+          <p>https://ytch.xyz</p>
+        </div>
+      </Modal>
     </main>
   );
 };
