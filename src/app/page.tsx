@@ -62,7 +62,7 @@ const Home: React.FC = () => {
         <>
           <iframe
             className="w-full h-full"
-            src={`https://player.twitch.tv/?channel=${currentChannel}&parent=embed.example.com&muted=${isMuted}`}
+            src={`https://player.twitch.tv/?channel=${currentChannel}&parent=twch.xyz&muted=${isMuted}`}
             allowFullScreen
           ></iframe>
           <ChannelDisplay channelNumber={currentChannelIndex + 1} />
