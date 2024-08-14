@@ -14,6 +14,9 @@ import {
   VolumeX,
 } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
+const Static = () => (
+  <div className="w-full h-full bg-static-pattern bg-repeat fixed top-0 z-10" />
+);
 
 const Home: React.FC = () => {
   const staticRef = useRef<HTMLDivElement>(null);
@@ -47,8 +50,8 @@ const Home: React.FC = () => {
   const toggleRemoteExpansion = () => setIsRemoteExpanded(!isRemoteExpanded);
   const toggleModal = () => setIsModalOpen(!isModalOpen);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (isLoading) return <Static />;
+  if (error) return <div>Error: {error}</div>;
   if (channels.length === 0) return <div>No channels available</div>;
 
   const currentChannel = channels[currentChannelIndex];
@@ -66,12 +69,7 @@ const Home: React.FC = () => {
         </>
       )}
 
-      <div
-        ref={staticRef}
-        className={`w-full h-full bg-static-pattern bg-repeat fixed top-0 transition-opacity duration-300 ${
-          showStatic ? "opacity-100" : "opacity-0"
-        }`}
-      />
+      {showStatic && <Static />}
 
       <div
         className={`absolute bottom-8 right-8 z-20 transition-all duration-300 ${
@@ -86,13 +84,11 @@ const Home: React.FC = () => {
                 icon={<Power />}
                 label="Power"
               />
-
               <RemoteButton
                 onClick={() => handleChannelChange("up")}
                 icon={<ChevronUp />}
                 label="Channel Up"
               />
-
               <RemoteButton
                 onClick={toggleMute}
                 icon={isMuted ? <VolumeX /> : <Volume2 />}
