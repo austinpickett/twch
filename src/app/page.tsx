@@ -117,7 +117,7 @@ const Home: React.FC = () => {
       <Modal isOpen={isModalOpen} onClose={toggleModal}>
         <div className="mb-4">
           <h2 className="text-xl">Email</h2>
-          <p>phragg@example.com</p>
+          <p>phragg@gmail.com</p>
         </div>
 
         <div className="mb-4">
