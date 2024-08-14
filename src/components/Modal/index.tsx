@@ -10,7 +10,7 @@ interface ModalProps {
 const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-black font-mono bg-opacity-50 z-50 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black font-mono bg-opacity-50 z-50 flex justify-center items-center p-4">
       <div className="bg-white text-black p-6 rounded-lg max-w-3xl relative">
         <button
           onClick={onClose}

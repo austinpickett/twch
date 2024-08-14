@@ -122,7 +122,9 @@ const Home: React.FC = () => {
 
         <div className="mb-4">
           <h2 className="text-xl">Support</h2>
-          <p>0x862bF52be02a2AbF96FdAeB22EA9089E821b0591</p>
+          <p className="break-all">
+            0x862bF52be02a2AbF96FdAeB22EA9089E821b0591
+          </p>
         </div>
 
         <div>
