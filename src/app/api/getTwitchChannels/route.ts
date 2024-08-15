@@ -42,7 +42,7 @@ async function handleRequest(request: NextRequest) {
     const shuffledChannels = channels.sort(() => 0.5 - Math.random());
 
     console.log("Returning shuffled channels");
-    return NextResponse.json(shuffledChannels.slice(0, 10));
+    return NextResponse.json(shuffledChannels);
   } catch (error) {
     console.error("Error fetching Twitch channels:", error);
     return NextResponse.json(
