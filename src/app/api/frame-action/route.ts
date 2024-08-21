@@ -1,4 +1,3 @@
-import { getStreamInfo } from "@/app/utils/twitchUtils";
 import { NextRequest, NextResponse } from "next/server";
 
 interface FrameRequest {
@@ -34,7 +33,6 @@ export async function POST(request: NextRequest) {
         );
       }
       console.log(`Opening Twitch channel: ${state}`);
-      const streamInfo = await getStreamInfo(state);
       const html = `
         <!DOCTYPE html>
         <html lang="en">
@@ -44,13 +42,12 @@ export async function POST(request: NextRequest) {
           <meta property="fc:frame" content="vNext">
           <meta property="fc:frame:image" content="https://static-cdn.jtvnw.net/previews-ttv/live_user_${state}-640x360.jpg">
           <meta property="fc:frame:button:1" content="Open Twitch Stream">
-          <meta property="fc:frame:action" content="link">
           <meta property="fc:frame:button:1:action" content="link">
           <meta property="fc:frame:button:1:target" content="https://twitch.tv/${state}">
         </head>
         <body>
           <h1>Watch ${state} on Twitch</h1>
-          <p>${streamInfo.title}</p>
+          <p>Click the button below to open the stream for ${state}</p>
         </body>
         </html>
       `;
