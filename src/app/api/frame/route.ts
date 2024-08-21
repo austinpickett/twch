@@ -1,4 +1,3 @@
-// app/api/frame/route.ts
 import { getChannels } from "@/app/utils/twitchUtils";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -15,6 +14,7 @@ async function generateFrameHtml(currentChannel: string) {
       <meta property="fc:frame:button:1" content="Next Channel">
       <meta property="fc:frame:button:2" content="Watch on Twitch">
       <meta property="fc:frame:post_url" content="https://twch.xyz/api/frame-action">
+      <meta property="fc:frame:state" content="${currentChannel}">
     </head>
     <body>
       <h1>Current Twitch Channel: ${currentChannel}</h1>
