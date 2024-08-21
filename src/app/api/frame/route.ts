@@ -1,17 +1,6 @@
-import axios from "axios";
+// app/api/frame/route.ts
+import { getChannels } from "@/app/utils/twitchUtils";
 import { NextRequest, NextResponse } from "next/server";
-
-export async function getChannels(): Promise<string[]> {
-  try {
-    const response = await axios.get(
-      "https://your-domain.com/api/getTwitchChannels"
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching channels:", error);
-    throw new Error("Failed to fetch channels. Please try again later.");
-  }
-}
 
 async function generateFrameHtml(currentChannel: string) {
   return `
@@ -25,7 +14,7 @@ async function generateFrameHtml(currentChannel: string) {
       <meta property="fc:frame:image" content="https://static-cdn.jtvnw.net/previews-ttv/live_user_${currentChannel}-640x360.jpg">
       <meta property="fc:frame:button:1" content="Next Channel">
       <meta property="fc:frame:button:2" content="Watch on Twitch">
-      <meta property="fc:frame:post_url" content="https://twch.xyz/api/frame">
+      <meta property="fc:frame:post_url" content="https://twch.xyz/api/frame-action">
     </head>
     <body>
       <h1>Current Twitch Channel: ${currentChannel}</h1>

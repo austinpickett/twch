@@ -1,6 +1,5 @@
-// app/api/frame-action/route.ts
+import { getChannels } from "@/app/utils/twitchUtils";
 import { NextRequest, NextResponse } from "next/server";
-import { getChannels } from "../frame/route"; // Ensure this import path is correct
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,10 +7,8 @@ export async function POST(request: NextRequest) {
     const { untrustedData } = body;
 
     if (untrustedData.buttonIndex === 1) {
-      // Logic for "Next Channel" - redirect to /api/frame to get a new channel
       return NextResponse.redirect(new URL("/api/frame", request.url));
     } else if (untrustedData.buttonIndex === 2) {
-      // Logic for "Watch on Twitch" - redirect to a random Twitch channel
       const channels = await getChannels();
       if (channels.length === 0) {
         return NextResponse.json(
