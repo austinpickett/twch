@@ -13,6 +13,8 @@ async function generateFrameHtml(channel: string, streamTitle: string) {
       <meta property="fc:frame:image" content="https://static-cdn.jtvnw.net/previews-ttv/live_user_${channel}-640x360.jpg">
       <meta property="fc:frame:button:1" content="Next Channel">
       <meta property="fc:frame:button:2" content="Watch on Twitch">
+      <meta property="fc:frame:button:2:action" content="link">
+      <meta property="fc:frame:button:2:target" content="https://twitch.tv/${channel}">
       <meta property="fc:frame:post_url" content="https://twch.xyz/api/frame-action">
       <meta property="fc:frame:state" content="${channel}">
     </head>
