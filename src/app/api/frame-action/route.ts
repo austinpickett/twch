@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
+interface FrameRequest {
+  untrustedData: {
+    buttonIndex: number;
+  };
+  state?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const body: FrameRequest = await request.json();
     console.log("Received POST body:", JSON.stringify(body, null, 2));
 
     const { untrustedData, state } = body;
@@ -36,11 +43,22 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error processing frame action:", error);
-    return NextResponse.json(
-      { error: "Internal server error", details: error.message },
-      { status: 500 }
-    );
+
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: "Internal server error", details: error.message },
+        { status: 500 }
+      );
+    } else {
+      return NextResponse.json(
+        {
+          error: "Internal server error",
+          details: "An unknown error occurred",
+        },
+        { status: 500 }
+      );
+    }
   }
 }
