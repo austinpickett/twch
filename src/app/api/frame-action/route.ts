@@ -1,3 +1,4 @@
+import { getStreamInfo } from "@/app/utils/twitchUtils";
 import { NextRequest, NextResponse } from "next/server";
 
 interface FrameRequest {
@@ -13,8 +14,6 @@ export async function POST(request: NextRequest) {
     console.log("Received POST body:", JSON.stringify(body, null, 2));
 
     const { untrustedData, state } = body;
-    console.log("Extracted untrustedData:", untrustedData);
-    console.log("Extracted state:", state);
 
     if (!untrustedData) {
       return NextResponse.json(
@@ -34,8 +33,30 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      console.log(`Redirecting to Twitch channel: ${state}`);
-      return NextResponse.redirect(`https://twitch.tv/${state}`);
+      console.log(`Opening Twitch channel: ${state}`);
+      const streamInfo = await getStreamInfo(state);
+      const html = `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta property="fc:frame" content="vNext">
+          <meta property="fc:frame:image" content="https://static-cdn.jtvnw.net/previews-ttv/live_user_${state}-640x360.jpg">
+          <meta property="fc:frame:button:1" content="Open Twitch Stream">
+          <meta property="fc:frame:action" content="link">
+          <meta property="fc:frame:button:1:action" content="link">
+          <meta property="fc:frame:button:1:target" content="https://twitch.tv/${state}">
+        </head>
+        <body>
+          <h1>Watch ${state} on Twitch</h1>
+          <p>${streamInfo.title}</p>
+        </body>
+        </html>
+      `;
+      return new NextResponse(html, {
+        headers: { "Content-Type": "text/html" },
+      });
     } else {
       console.log(`Invalid button index: ${untrustedData.buttonIndex}`);
       return NextResponse.json(
@@ -45,7 +66,6 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: unknown) {
     console.error("Error processing frame action:", error);
-
     if (error instanceof Error) {
       return NextResponse.json(
         { error: "Internal server error", details: error.message },
